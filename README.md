@@ -1,90 +1,98 @@
-# Demonstration Project
+# Next.js Flask Postgres Starter
 
-This is a demonstration project using an example project from the Vercel python examples at [https://github.com/vercel/examples](https://github.com/vercel/examples).
-
-What we want to demonstrate is "pair programming" in Cursor between me (@peterdresslar) and an AI chatbot. Our `main` branch will have the base example.
-
-In our branches, we'll use different AI engines to accomplish more or less the same tweak to the codebase--we want to alter the example to actually demonstrate communication between the Next React app and the Flask API. This is a simple example, but does involve a little bit of knowledge about the environments that extends well beyond pure TS/Python code. 
-
-We'll use a nonstandard (as of now!) file called `chats.txt` in the root to capture some chat messages.
-
----
-
-<p align="center">
-  <a href="https://nextjs-flask-starter.vercel.app/">
-    <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" height="96">
-    <h3 align="center">Next.js Flask Starter</h3>
-  </a>
-</p>
-
-<p align="center">Simple Next.js boilerplate that uses <a href="https://flask.palletsprojects.com/">Flask</a> as the API backend.</p>
-
-<br/>
+This project extends Vercel's `nextjs-flask` template to demonstrate:
+1. Interaction with the Flask API (the Next app from the base example does not actually interact with the Flask API)
+2. A simple Postgres database creation, migration, and seeding workflow, connected to the Flask app using Flask-Migrate
 
 ## Introduction
 
-This is a hybrid Next.js + Python app that uses Next.js as the frontend and Flask as the API backend. One great use case of this is to write Next.js apps that use Python AI libraries on the backend.
+This is a hybrid Next.js + Python app that uses Next.js as the frontend and Flask as the API backend. It demonstrates how to integrate a Postgres database into this stack, including setup, migrations, and seeding.
 
-## How It Works
+## Key Features
 
-The Python/Flask server is mapped into to Next.js app under `/api/`.
+- Next.js frontend
+- Flask API backend
+- Postgres database integration
+- Database migration and seeding workflow
+- Can run locally or be hosted on Vercel (or other platforms)
 
-This is implemented using [`next.config.js` rewrites](https://github.com/vercel/examples/blob/main/python/nextjs-flask/next.config.js) to map any request to `/api/:path*` to the Flask API, which is hosted in the `/api` folder.
+## Requirements
 
-On localhost, the rewrite will be made to the `127.0.0.1:5328` port, which is where the Flask server is running.
+The critical external requirement for this project is a Postgres database and a connection string stored as an environment variable. The project will look for the environment variable in a `.env` file (using Python's `dotenv`) when run locally, or in the hosting platform's environment variables (e.g., Vercel's production environment variables) when deployed.
 
-In production, the Flask server is hosted as [Python serverless functions](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python) on Vercel.
-
-## Demo
-
-https://nextjs-flask-starter.vercel.app/
-
-## Deploy Your Own
-
-You can clone & deploy it to Vercel with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-title=Next.js%20Flask%20Starter&demo-description=Simple%20Next.js%20boilerplate%20that%20uses%20Flask%20as%20the%20API%20backend.&demo-url=https%3A%2F%2Fnextjs-flask-starter.vercel.app%2F&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F795TzKM3irWu6KBCUPpPz%2F44e0c6622097b1eea9b48f732bf75d08%2FCleanShot_2023-05-23_at_12.02.15.png&project-name=Next.js%20Flask%20Starter&repository-name=nextjs-flask-starter&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fnextjs-flask&from=vercel-examples-repo)
-
-## Developing Locally
-
-You can clone & create this repo with the following command
-
-```bash
-npx create-next-app nextjs-flask --example "https://github.com/vercel/examples/tree/main/python/nextjs-flask"
-```
+**Note on Security**: The database security in this example is basic and should be enhanced for production use.
 
 ## Getting Started
 
-First, install the dependencies:
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/fullstack-nextjs-flask.git
+   cd fullstack-nextjs-flask
+   ```
 
-```bash
-npm install
-# or
-yarn
-# or
-pnpm install
-```
+2. Install dependencies:
+   ```
+   pnpm install
+   pip install -r requirements.txt
+   ```
 
-Then, run the development server:
+3. Set up your Postgres database and add the connection string to your `.env` file:
+   ```
+   POSTGRES_URL=postgresql://username:password@host:port/database?sslmode=require
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+4. Initialize the database:
+   ```
+   pnpm run init-db
+   pnpm run migrate-db
+   pnpm run upgrade-db
+   pnpm run seed-db
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Run the development server:
+   ```
+   pnpm run dev
+   ```
 
-The Flask server will be running on [http://127.0.0.1:5328](http://127.0.0.1:5328) – feel free to change the port in `package.json` (you'll also need to update it in `next.config.js`).
+6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Deployment
+
+This project can be easily hosted on Vercel, but it's also possible to host it on other platforms. Here are the steps for deploying to Vercel:
+
+1. Push your code to a GitHub repository.
+
+2. Sign up for a Vercel account if you haven't already.
+
+3. In Vercel, click "New Project" and import your GitHub repository.
+
+4. In the configuration step:
+   - Framework Preset: Select Next.js
+   - Build Command: Use the default (`next build`)
+   - Output Directory: Use the default (`.next`)
+   - Install Command: Change to `pnpm install`
+
+5. In the Environment Variables section, add your `POSTGRES_URL`.
+
+6. Deploy the project.
+
+For other platforms, ensure that:
+- Both the Next.js frontend and Flask backend are deployed.
+- The `POSTGRES_URL` environment variable is set.
+- Python dependencies from `requirements.txt` are installed.
+- Database migrations are run on deployment.
+
+## How It Works
+
+The Python/Flask server is mapped into the Next.js app under `/api/`. This is implemented using `next.config.js` rewrites to map any request to `/api/:path*` to the Flask API, hosted in the `/api` folder.
+
+On localhost, the rewrite will be made to `127.0.0.1:5328`, where the Flask server runs. In production, the Flask server is hosted as serverless functions.
+
+The Postgres database is accessed through SQLAlchemy in the Flask backend, demonstrating basic CRUD operations and migrations.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Flask Documentation](https://flask.palletsprojects.com/en/1.1.x/) - learn about Flask features and API.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [SQLAlchemy Documentation](https://docs.sqlalchemy.org/)
+- [Vercel Deployment Documentation](https://vercel.com/docs)
